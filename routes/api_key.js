@@ -37,4 +37,13 @@ router.get("/:keyId", async (req, res) => {
     return res.send("")
 })
 
+router.delete("/:keyId", async (req, res) => {
+    const key_id = req.params.keyId
+    const key_content = await utils.api_key.keyExists(key_id)
+    if(key_content) {
+        await knex("API_KEYS").where("key_id", key_id).del()
+    }
+    return res.json(key_content)
+})
+
 module.exports = router
