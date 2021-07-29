@@ -17,6 +17,8 @@ const knex = require("knex")({
 
 router.post("/", async (req, res) => {
     const email = req.body.email
+    if(!validator.isEmail(email)) return res.json({})
+    if(await utils.api_key.emailExists(email)) return res.json({})
 
     await knex("API_KEYS").insert({email: email})
     // so, here knex returns key_id value inside an object which is inside a list, hence why the need for [0].key_id
