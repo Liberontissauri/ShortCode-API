@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const rateLimit = require("express-rate-limit")
 const validator = require("validator")
 const utils = require("../utils")
 const { keyExists } = require("../utils/api_key")
@@ -14,6 +15,12 @@ const knex = require("knex")({
     },
     searchPath: ['knex', 'public'],
 })
+
+const limiter = rateLimit({
+    windowMs: 1 * 30 * 1000,
+    max: 15,
+})
+router.use(limiter)
 
 router.post("/", async (req, res) => {
     const email = req.body.email
