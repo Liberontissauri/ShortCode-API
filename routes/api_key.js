@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const validator = require("validator")
 const knex = require("knex")({
     client: "pg",
     connection: {
@@ -23,6 +24,16 @@ router.post("/", async (req, res) => {
         api_key: api_key,
         email: email,
     })
+})
+
+router.get("/:keyId", async (req, res) => {
+    const key_id = req.params.keyId
+    let stored_key
+    if(validator.isUUID(key_id)) {
+        stored_key = await knex("API_KEYS").where("key_id", key_id)
+        return res.json(stored_key[0])
+    }
+    res.send("")
 })
 
 module.exports = router
