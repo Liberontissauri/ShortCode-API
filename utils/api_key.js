@@ -19,5 +19,14 @@ async function keyExists(key_id) {
 
     return stored_key[0]
 }
+async function emailExists(email) {
+    if(!validator.isEmail(email)) return false
+
+    stored_key = await knex("API_KEYS").where("email", email)
+    if (stored_key.length == 0) return false
+
+    return stored_key[0]
+}
 
 module.exports.keyExists = keyExists
+module.exports.emailExists = emailExists
