@@ -37,4 +37,16 @@ router.get("/:codeId", async (req, res) => {
     return res.send("")
 })
 
+router.delete("/:codeId", async (req, res) => {
+    const code_id = req.params.codeId
+    const api_key = req.body.api_key
+    const key_content = await utils.api_key.keyExists(api_key)
+    const code_content = await utils.code.codeExists(code_id)
+    if(code_content && key_content.key_id == code_content.key_id) {
+        await knex("CODES").where("code_id", code_id).del()
+        return res.json(code_content)
+    }
+    return res.json({})
+})
+
 module.exports = router
