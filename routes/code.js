@@ -28,4 +28,13 @@ router.post("/", async (req, res) => {
     return res.json({})
 })
 
+router.get("/:codeId", async (req, res) => {
+    const code_id = req.params.codeId
+    const code_content = await utils.code.codeExists(code_id)
+    if(code_content) {
+        return res.json(code_content)
+    }
+    return res.send("")
+})
+
 module.exports = router
