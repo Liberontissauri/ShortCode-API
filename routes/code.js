@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const rateLimit = require("express-rate-limit")
 const knex = require("knex")({
     client: "pg",
     connection: {
@@ -12,6 +13,13 @@ const knex = require("knex")({
     searchPath: ['knex', 'public'],
 })
 const utils = require("../utils")
+
+const limiter = rateLimit({
+    windowMs: 1 * 20 * 1000,
+    max: 10,
+})
+
+router.use(limiter)
 
 router.post("/", async (req, res) => {
     const api_key = req.body.keyId
