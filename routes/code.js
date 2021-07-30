@@ -32,7 +32,12 @@ router.get("/:codeId", async (req, res) => {
     const code_id = req.params.codeId
     const code_content = await utils.code.codeExists(code_id)
     if(code_content) {
-        return res.json(code_content)
+        return res.json({
+            "code_id": code_content.code_id,
+            "title": code_content.title,
+            "code": code_content.code,
+            "lang": code_content.lang
+        })
     }
     return res.send("")
 })
