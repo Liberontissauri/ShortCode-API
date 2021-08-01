@@ -23,6 +23,7 @@ router.use(limiter)
 
 router.post("/", async (req, res) => {
     const api_key = req.body.keyId
+    if(!validator.isUUID(api_key)) return res.status(400).json(utils.error.generateErrorResponse("InvalidInput","The keyId field was supplied with a string that is not in the format of an UUID"))
     const title = req.body.title
     const code = req.body.code
     const language = req.body.language
@@ -33,11 +34,12 @@ router.post("/", async (req, res) => {
             code_id: code_id
         })
     }
-    return res.json({})
+    return res.status(401).json(utils.error.generateErrorResponse("Rejected","The used API key does not exist"))
 })
 
 router.get("/:codeId", async (req, res) => {
     const code_id = req.params.codeId
+    if(!validator.isUUID(code_id)) return res.status(400).json(utils.error.generateErrorResponse("InvalidInput","The code_id param was supplied with a string that is not in the format of an UUID"))
     const code_content = await utils.code.codeExists(code_id)
     if(code_content) {
         return res.json({
@@ -47,19 +49,22 @@ router.get("/:codeId", async (req, res) => {
             "lang": code_content.lang
         })
     }
-    return res.send("")
+    return res.status(404).json(utils.error.generateErrorResponse("NotFound","The requested Code Post was not found"))
 })
 
 router.delete("/:codeId", async (req, res) => {
     const code_id = req.params.codeId
+    if(!validator.isUUID(code_id)) return res.status(400).json(utils.error.generateErrorResponse("InvalidInput","The code_id param was supplied with a string that is not in the format of an UUID"))
     const api_key = req.body.api_key
+    if(!validator.isUUID(api_key)) return res.status(400).json(utils.error.generateErrorResponse("InvalidInput","The keyId field was supplied with a string that is not in the format of an UUID"))
     const key_content = await utils.api_key.keyExists(api_key)
     const code_content = await utils.code.codeExists(code_id)
+    if(key_content.key_id != code_content.key_id && key_content) return res.status(401).json(utils.error.generateErrorResponse("Rejected","The used API key is not valid for deleting this post"))
     if(code_content && key_content.key_id == code_content.key_id) {
         await knex("CODES").where("code_id", code_id).del()
         return res.json(code_content)
     }
-    return res.json({})
+    return res.status(404).json(utils.error.generateErrorResponse("NotFound","The requested Code Post was not found"))
 })
 
 module.exports = router
