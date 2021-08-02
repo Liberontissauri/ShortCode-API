@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const validator = require("validator")
 const rateLimit = require("express-rate-limit")
 const knex = require("knex")({
     client: "pg",
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
     const code = req.body.code
     const language = req.body.language
     if(await utils.api_key.keyExists(api_key)) {
-        const code_id = (await knex("CODES").returning("code_id").insert({key_id: api_key, title: title, code: code, lang: language}))[0]
+        const code_id = (await knex("codes").returning("code_id").insert({key_id: api_key, title: title, code: code, lang: language}))[0]
 
         return res.json({
             code_id: code_id
@@ -61,7 +62,7 @@ router.delete("/:codeId", async (req, res) => {
     const code_content = await utils.code.codeExists(code_id)
     if(key_content.key_id != code_content.key_id && key_content) return res.status(401).json(utils.error.generateErrorResponse("Rejected","The used API key is not valid for deleting this post"))
     if(code_content && key_content.key_id == code_content.key_id) {
-        await knex("CODES").where("code_id", code_id).del()
+        await knex("codes").where("code_id", code_id).del()
         return res.json(code_content)
     }
     return res.status(404).json(utils.error.generateErrorResponse("NotFound","The requested Code Post was not found"))

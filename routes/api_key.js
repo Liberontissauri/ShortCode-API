@@ -27,9 +27,9 @@ router.post("/", async (req, res) => {
     if(!validator.isEmail(email)) return res.status(400).json(utils.error.generateErrorResponse("InvalidInput","The email field contains an invalid email"))
     if(await utils.api_key.emailExists(email)) return res.status(403).json(utils.error.generateErrorResponse("DuplicateContent","The email in the email field already has a registred API"))
 
-    await knex("API_KEYS").insert({email: email})
+    await knex("api_keys").insert({email: email})
     // so, here knex returns key_id value inside an object which is inside a list, hence why the need for [0].key_id
-    const api_key = (await knex("API_KEYS").where("email", email).select("key_id"))[0].key_id
+    const api_key = (await knex("api_keys").where("email", email).select("key_id"))[0].key_id
 
     res.status(200).json({
         api_key: api_key,
@@ -54,7 +54,7 @@ router.delete("/:keyId", async (req, res) => {
 
     const key_content = await utils.api_key.keyExists(key_id)
     if(key_content) {
-        await knex("API_KEYS").where("key_id", key_id).del()
+        await knex("api_keys").where("key_id", key_id).del()
     }
     return res.status(404).json(utils.error.generateErrorResponse("NotFound","The requested API key was not found"))
 })

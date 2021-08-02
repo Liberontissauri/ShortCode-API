@@ -14,7 +14,7 @@ const knex = require("knex")({
 async function keyExists(key_id) {
     if(!validator.isUUID(key_id)) return false
 
-    stored_key = await knex("API_KEYS").where("key_id", key_id)
+    stored_key = await knex("api_keys").where("key_id", key_id)
     if (stored_key.length == 0) return false
 
     return stored_key[0]
@@ -22,7 +22,7 @@ async function keyExists(key_id) {
 async function emailExists(email) {
     if(!validator.isEmail(email)) return false
 
-    stored_key = await knex("API_KEYS").where("email", email)
+    stored_key = await knex("api_keys").where("email", email)
     if (stored_key.length == 0) return false
 
     return stored_key[0]

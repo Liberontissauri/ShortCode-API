@@ -14,7 +14,7 @@ const knex = require("knex")({
 async function codeExists(code_id) {
     if(!validator.isUUID(code_id)) return false
 
-    stored_code = await knex("CODES").where("code_id", code_id)
+    stored_code = await knex("codes").where("code_id", code_id)
     if (stored_code.length == 0) return false
 
     return stored_code[0]
