@@ -2,8 +2,9 @@ const dotenv = require("dotenv").config()
 const express = require('express')
 const routes = require("./routes")
 var app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 5000
 
+app.use(require("cors")())
 app.use(require("body-parser").json())
 app.use(routes)
 
@@ -12,6 +13,6 @@ app.get('/', async function (req, res) {
     res.send("")
 })
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
 
 })
